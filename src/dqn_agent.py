@@ -224,7 +224,6 @@ class DQNAgent:
         
 # Exemple d'utilisation 
 if __name__ == '__main__':
-    # Nécessite d'importer l'environnement pour un test complet
     from connect_four_env import ConnectFourEnv
     
     # Configuration
@@ -252,14 +251,6 @@ if __name__ == '__main__':
     
     # Enregistrement de la transition
     agent.memory.push(state_tensor, action_tensor, reward, next_state_tensor, done)
-    print(f"Taille de la mémoire après push: {len(agent.memory)}")
-    
-    # Test de l'optimisation (nécessite plus d'échantillons)
-    print("Test d'optimisation (nécessite BATCH_SIZE échantillons)...")
-    # Pour un test réel, il faudrait remplir la mémoire jusqu'à BATCH_SIZE
-    # Ici, on se contente de vérifier que la méthode existe et ne plante pas immédiatement.
-    # loss = agent.optimize_model()
-    # print(f"Loss: {loss}")
     
     # Test de la mise à jour du réseau cible
     agent.update_target_network()
