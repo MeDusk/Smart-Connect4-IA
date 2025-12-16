@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+env/
+
+# Modèles entraînés 
+models/*.pth
+!models/dqn_connect_four_final.pth  # Garder le modèle final
+
+# Données
+data/*.npy
+data/*.jpg
+data/*.png
+
+# Logs
+logs/*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
+
+# PyTorch
+*.pt
+*.ckpt
