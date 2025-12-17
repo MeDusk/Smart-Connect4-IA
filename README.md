@@ -184,10 +184,3 @@ echo '{"command":"shutdown"}' | python inference.py
   "message": "AI server shutting down gracefully"
 }
 ```
-
-***
-
-    "valid_actions": [0, 1, 2, 3, 4, 5, 6]
-  }
-}
-→ L'IA choisit la colonne 3 (centre du plateau)
