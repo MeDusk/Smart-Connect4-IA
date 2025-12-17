@@ -149,8 +149,8 @@ echo '{"command":"predict","board":[[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0
 ```
 
 **Légende :**
-- `X` = Joueur 1 (Humain) = `1` dans le JSON
-- `O` = Joueur 2 (IA) = `2` dans le JSON
+- `X` = Joueur 1 (IA) = `1` dans le JSON
+- `O` = Joueur 2 (Humain) = `2` dans le JSON
 - `.` = Case vide = `0` dans le JSON
 
 **Réponse attendue :**
