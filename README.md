@@ -92,8 +92,8 @@ echo '{"command":"predict","board":[[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0
 | Valeur | Signification |
 |--------|--------------|
 | `0` | Case vide |
-| `1` | Jeton du joueur 1 (Humain) |
-| `2` | Jeton du joueur 2 (IA) |
+| `1` | Jeton du IA |
+| `2` | Jeton de Humain |
 
 ***
 
