@@ -40,25 +40,8 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-#### Test d'Intégration (Module d'Inférence)
 
-```bash
-# Tester le module d'inférence (protocole JSON/StdIO)
-python test_inference.py
-```
-
-**Sortie attendue :**
-```
-✓ Test 1: Signal ready
-✓ Test 2: Plateau vide
-✓ Test 3: Détection victoire immédiate
-✓ Test 4: Temps d'inférence < 100ms
-✓✓✓ TOUS LES TESTS RÉUSSIS ✓✓✓
-```
-
-***
-
-### Inférence (Mode Production)
+### Inférence 
 
 #### Lancer le Serveur d'Inférence
 
