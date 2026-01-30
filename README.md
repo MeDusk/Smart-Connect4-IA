@@ -96,3 +96,45 @@ Application React affichant l'état du plateau et communiquant avec les services
 ---
 
 ## Guide de Démarrage
+
+### Installation des dépendances
+
+```bash
+# Backend Python
+cd ai_agent
+python -m venv .venv
+source .venv/bin/activate  # ou .venv\Scripts\activate sur Windows
+pip install -r requirements.txt
+
+# Bridge Arduino
+cd ../arduino_controler
+npm install
+
+# Frontend Node.js
+cd ../web_client
+npm install
+```
+
+### Lancer l'application 
+
+**Terminal 1 - Serveur IA**
+```bash
+cd ai_agent
+python brain.py
+```
+
+**Terminal 2 - Bridge Arduino**
+```bash
+cd arduino_controler
+node firmata.js
+```
+
+**Terminal 3 - Interface Web**
+```bash
+cd web_client
+npm run dev
+```
+
+Il suffit ensuite d'ouvrir l'application dans votre navigateur à l'adresse indiquée par Vite.
+
+Si la carte arduino est bien connectée à votre ordinateur, vous êtes pret à affronter notre robot !
