@@ -1,186 +1,98 @@
-# Smart-Connect4-IA
+# Robot Puissance 4 Autonome
 
+| | |
+|---|---|
+| **Élèves** | [Vos noms] |
+| **Professeur** | [Nom du prof] |
+| **Unité d'Enseignement** | [Code UE - Titre] |
+| **Établissement** | Université Claude Bernard Lyon 1 |
+| **Période** | [Date de début - Date de fin] |
+
+---
+## Introduction
+
+Ce projet vise à développer un **robot autonome capable de jouer au Puissance 4** contre un adversaire humain. Le système combine trois éléments clés :
+- Une **intelligence artificielle** entraînée par apprentissage par renforcement (DQN) capable de jouer au puissance 4
+- Un **contrôleur Arduino** gérant les capteurs et actionneurs physiques
+- Une **interface web** permettant de visualiser et contrôler le jeu en temps réel
+
+[**Insérer image du montage physique ici**]
+
+---
 ## Structure du Projet
 
 ```
 Smart-Connect4-IA/
-├── src/
-│   ├── __init__.py
-│   ├── dqn_agent.py              # Agent DQN avec Dueling architecture
-│   ├── dqn_model.py              # Architecture Dueling DQN
-│   ├── connect_four_env.py       # Environnement de simulation Puissance 4
-│   ├── train_dqn.py              # Script d'entraînement principal
-│   └── test_dqn.py               # Tests de l'agent
-├── inference.py                   # Module d'inférence pour production
-├── test_inference.py              # Tests d'intégration backend
-├── requirements.txt               # Dépendances Python
-├── models/
-│   └── dqn_connect_four_final.pth # Modèle entraîné (Git LFS)
-└── README.md                      # Documentation
+│
+├── ai_agent/         # IA de jeu
+│   ├── brain.py      # API Flask de l'IA
+│   ├── src/          # Scripts d'entrainement et de test des modèles
+│   ├── models/       # Poids des modèles entraînés
+│   └── requirements.txt
+│
+├── arduino_controler/ # Contrôle du hardware
+│   ├── main_brain.ino # Code initial Arduino pour tester les actionneurs/capteurs
+│   └── firmata.js     # Pont communiquant entre la arduino (via firmata), l'API du programme de jeu et le frontend (WebSocket)
+│
+├── web_client/       # Frontend
+│   ├── src/          # Scripts React
+│   ├── index.html    # Page HTML
+│   ├── package.json  # Dépendances Node.js
+│   └── vite.config.js
+│
+└── README.md
 ```
 
-***
+---
+## Composants du Projet
 
-## Commandes d'Utilisation
+### 1 - Module IA (`ai_agent/`)
 
-### 1️Installation
+Implémentation d'un agent DQN Dueling pour apprendre la stratégie optimale au Puissance 4.
 
-```bash
-# Cloner le dépôt GitHub
-git clone https://github.com/MeDusk/Smart-Connect4-IA.git
-cd Smart-Connect4-IA
+**Responsabilités :**
+- `connect_four_env.py` : Implémentation de l'environnement de jeu (règles, états, récompenses)
+- `train_dqn.py` : Entraînement de l'agent contre lui-même via apprentissage par renforcement
+- `inference.py` : Module d'inférence qui charge le modèle et effectue les prédictions
+- `brain.py` : Serveur Flask exposant l'endpoint `/predict` pour les requêtes HTTP
 
-# Créer un environnement virtuel Python
-python -m venv .venv
+**Technologies :** PyTorch, NumPy, Flask
 
-# Activer l'environnement virtuel
-.venv\Scripts\activate             
+---
 
-# Installer les dépendances
-pip install -r requirements.txt
-```
+### 2 - Contrôleur Arduino (`arduino_controler/`)
 
+Gestion du hardware physique : capteurs de détection de pièces et moteurs de positionnement.
 
-### Inférence 
+**Responsabilités :**
+- `main_brain.ino` : Code Arduino bas niveau pour :
+  - Lecture des capteurs infrarouge (7 colonnes)
+  - Contrôle du moteur pas à pas (mouvement horizontal)
+  - Contrôle du servo moteur (libération des pièces)
 
-#### Lancer le Serveur d'Inférence
+- `firmata.js` : adaptation de la logique de jeu implémentée précédemment qui assurant le pont entre :
+  - Arduino (via Firmata protocol)
+  - Serveur Python IA (appels HTTP)
+  - Interface web (WebSocket)
 
-```bash
-# Démarrer le module IA en mode production
-python inference.py
-```
+**Technologies :** Arduino C++, Johnny-Five (Node.js), Firmata Protocol
 
-**Sortie attendue :**
-```json
-{"status": "ready", "message": "AI inference server ready", "config": {...}}
-```
+---
 
-Ca veut dire que Le serveur attend les requêtes sur **stdin** (entrée standard).
+### 3 - Interface Web (`web_client/`)
 
-***
+Application React affichant l'état du plateau et communiquant avec les services backend.
 
-## Tester l'Inférence Manuellement
+**Responsabilités :**
+- `App.jsx` : Composant principal affichant :
+  - Le plateau de jeu 6x7 (avec animations Framer Motion)
+  - L'état de la partie en temps réel
+  - Bouton de réinitialisation
+- Communication WebSocket avec le serveur Arduino Bridge
+- Vite : bundler rapide pour le développement et la production
 
-### Commande de Base
+**Technologies :** React 19, Framer Motion, Vite, WebSocket
 
-```bash
-echo '{"command":"predict","board":[[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]]}' | python inference.py
-```
+---
 
-***
-
-### 📖 Explication de la Commande
-
-#### Structure de la Requête JSON
-
-```json
-{
-  "command": "predict",
-  "board": [
-    [0, 0, 0, 0, 0, 0, 0],  ← Ligne 0 (en haut)
-    [0, 0, 0, 0, 0, 0, 0],  ← Ligne 1
-    [0, 0, 0, 0, 0, 0, 0],  ← Ligne 2
-    [0, 0, 0, 0, 0, 0, 0],  ← Ligne 3
-    [0, 0, 0, 0, 0, 0, 0],  ← Ligne 4
-    [0, 0, 0, 0, 0, 0, 0]   ← Ligne 5 (en bas)
-  ]
-}
-```
-
-#### Signification des Valeurs
-
-| Valeur | Signification |
-|--------|--------------|
-| `0` | Case vide |
-| `1` | Jeton du IA |
-| `2` | Jeton de Humain |
-
-***
-
-### Exemples de Plateaux
-
-#### Exemple 1 : Plateau Vide (Début de Partie)
-
-```bash
-echo '{"command":"predict","board":[[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0]]}' | python inference.py
-```
-
-**Plateau visualisé :**
-```
-| . | . | . | . | . | . | . |
-| . | . | . | . | . | . | . |
-| . | . | . | . | . | . | . |
-| . | . | . | . | . | . | . |
-| . | . | . | . | . | . | . |
-| . | . | . | . | . | . | . |
-```
-
-**Réponse attendue :**
-```json
-{
-  "status": "success",
-  "column": 3,
-  "metadata": {
-    "confidence": 0.92,
-    "inference_time_ms": 4.2,
-    "valid_actions": [0, 1, 2, 3, 4, 5, 6]
-  }
-}
-```
-→ L'IA choisit la colonne 3 (centre du plateau)
-
-***
-
-#### Exemple 2 : Partie en Cours
-
-```bash
-echo '{"command":"predict","board":[[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,0,0,0,0,0],[0,0,1,0,0,0,0],[0,0,2,1,0,0,0]]}' | python inference.py
-```
-
-**Plateau visualisé :**
-```
-| . | . | . | . | . | . | . |
-| . | . | . | . | . | . | . |
-| . | . | . | . | . | . | . |
-| . | . | . | . | . | . | . |
-| . | . | X | . | . | . | . |  ← Ligne 4 : 1 jeton Humain (X)
-| . | . | O | X | . | . | . |  ← Ligne 5 : 1 jeton IA (O), 1 jeton Humain (X)
-  0   1   2   3   4   5   6    ← Numéros de colonnes
-```
-
-**Légende :**
-- `X` = Joueur 1 (IA) = `1` dans le JSON
-- `O` = Joueur 2 (Humain) = `2` dans le JSON
-- `.` = Case vide = `0` dans le JSON
-
-**Réponse attendue :**
-```json
-{
-  "status": "success",
-  "column": 2,
-  "metadata": {
-    "confidence": 0.87,
-    "inference_time_ms": 4.1,
-    "valid_actions": [0, 1, 2, 3, 4, 5, 6]
-  }
-}
-```
-→ L'IA joue en colonne 2 pour construire une menace verticale
-
-***
-
-
-
-### Commande Shutdown (Arrêt Propre)
-
-```bash
-echo '{"command":"shutdown"}' | python inference.py
-```
-
-**Réponse :**
-```json
-{
-  "status": "shutdown",
-  "message": "AI server shutting down gracefully"
-}
-```
+## Guide de Démarrage
